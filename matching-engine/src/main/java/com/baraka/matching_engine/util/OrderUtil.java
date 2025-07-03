@@ -45,10 +45,12 @@ public class OrderUtil {
             Map<BigInteger, Order> allOrders) {
         List<Trade> existingOrderTrades = existingOrder.getTrades();
         List<Trade> incomingOrderTrades = incomingOrder.getTrades();
-
-        Trade incomingOrderTrade = Trade.builder().amount(existingOrder.getPendingAmount().min(incomingOrder.getAmount())).orderId(incomingOrder.getId())
+        
+        BigDecimal minAmount = existingOrder.getPendingAmount().min(incomingOrder.getAmount());
+        
+        Trade incomingOrderTrade = Trade.builder().amount(minAmount).orderId(incomingOrder.getId())
                 .price(incomingOrder.getPrice()).build();
-        Trade existingOrderTrade = Trade.builder().amount(incomingOrder.getPendingAmount().min(existingOrder.getAmount())).orderId(existingOrder.getId())
+        Trade existingOrderTrade = Trade.builder().amount(minAmount).orderId(existingOrder.getId())
                 .price(existingOrder.getPrice()).build();
 
         existingOrderTrades.add(incomingOrderTrade);
@@ -58,14 +60,14 @@ public class OrderUtil {
         incomingOrder.setTrades(incomingOrderTrades);
 
         existingOrder.setPendingAmount(
-                existingOrder.getPendingAmount().subtract(incomingOrder.getAmount()).compareTo(BigDecimal.ZERO) < 0
+                existingOrder.getPendingAmount().subtract(minAmount).compareTo(BigDecimal.ZERO) < 0
                         ? BigDecimal.ZERO
-                        : existingOrder.getPendingAmount().subtract(incomingOrder.getAmount()));
+                        : existingOrder.getPendingAmount().subtract(minAmount));
                         
         incomingOrder.setPendingAmount(
-            incomingOrder.getPendingAmount().subtract(existingOrder.getAmount()).compareTo(BigDecimal.ZERO) < 0
+            incomingOrder.getPendingAmount().subtract(minAmount).compareTo(BigDecimal.ZERO) < 0
                         ? BigDecimal.ZERO
-                        : incomingOrder.getPendingAmount().subtract(existingOrder.getAmount()));
+                        : incomingOrder.getPendingAmount().subtract(minAmount));
 
         allOrders.computeIfPresent(existingOrder.getId(), (k, v) -> existingOrder);
         allOrders.computeIfPresent(incomingOrder.getId(), (k, v) -> incomingOrder);
