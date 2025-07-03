@@ -2,9 +2,10 @@ package com.baraka.matching_engine.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.stereotype.Service;
 import com.baraka.matching_engine.dto.Order;
 import com.baraka.matching_engine.dto.OrderBook;
@@ -21,17 +22,19 @@ import lombok.extern.log4j.Log4j2;
 public class OrdersService {
 
     private OrderBook orderBook;
-    private static Map<BigInteger, Order> allOrders = new HashMap<>();
+    private static Map<BigInteger, Order> allOrders = new ConcurrentHashMap<>();
 
     public Order createOrder(CreateOrderRequest createOrderRequest) {
-        PriorityQueue<Order> sellOrders = orderBook.getSellOrders();
-        PriorityQueue<Order> buyOrders = orderBook.getBuyOrders();
 
-        // build the order object from the create order request and save it to local hashmap memory.
+        // build the order object from the create order request and save it to local
+        // hashmap memory.
         Order incomingOrder = OrderUtil.buildBasicOrderFromRequest(createOrderRequest, allOrders);
 
         // Order book contains the PriorityQueues(PQ), we need to check first if it's a
         // buy or a sell order
+        PriorityQueue<Order> sellOrders = orderBook.getSellOrders();
+        PriorityQueue<Order> buyOrders = orderBook.getBuyOrders();
+
         if (createOrderRequest.getDirection().equals(Direction.BUY)) {
             return fulfillOrder(sellOrders, buyOrders, incomingOrder, Direction.BUY);
 
@@ -71,13 +74,13 @@ public class OrdersService {
                 break;
             }
         }
-        // in case when the request comes and no available order matched or queues are empty
+        // in case when the request comes and no available order matched or queues are
+        // empty
         if (incomingOrder.getPendingAmount().compareTo(BigDecimal.ZERO) > 0) {
             updationQueue.add(incomingOrder);
         }
         return incomingOrder;
     }
-
 
     // get order details api implementation.
     public Order getOrderDetails(String id) {
