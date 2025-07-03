@@ -2,8 +2,6 @@ package com.baraka.matching_engine.request;
 
 import java.math.BigDecimal;
 import com.baraka.matching_engine.enums.Direction;
-
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
