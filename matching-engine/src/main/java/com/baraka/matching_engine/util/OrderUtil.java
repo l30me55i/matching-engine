@@ -46,9 +46,9 @@ public class OrderUtil {
         List<Trade> existingOrderTrades = existingOrder.getTrades();
         List<Trade> incomingOrderTrades = incomingOrder.getTrades();
 
-        Trade incomingOrderTrade = Trade.builder().amount(incomingOrder.getAmount()).orderId(incomingOrder.getId())
+        Trade incomingOrderTrade = Trade.builder().amount(existingOrder.getPendingAmount().min(incomingOrder.getAmount())).orderId(incomingOrder.getId())
                 .price(incomingOrder.getPrice()).build();
-        Trade existingOrderTrade = Trade.builder().amount(existingOrder.getAmount()).orderId(existingOrder.getId())
+        Trade existingOrderTrade = Trade.builder().amount(incomingOrder.getPendingAmount().min(existingOrder.getAmount())).orderId(existingOrder.getId())
                 .price(existingOrder.getPrice()).build();
 
         existingOrderTrades.add(incomingOrderTrade);
