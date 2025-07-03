@@ -26,17 +26,21 @@ public class OrdersService {
 
         // build the order object from the create order request and save it to local
         // hashmap memory.
+        log.info("Saving basic request to Local Memory");
         Order incomingOrder = OrderUtil.buildBasicOrderFromRequest(createOrderRequest, allOrders);
 
         // Order book contains the PriorityQueues(PQ), we need to check first if it's a
         // buy or a sell order
+        log.info("Fetching sell and buy order entries from the DB");
         PriorityQueue<Order> sellOrders = orderBook.getSellOrders();
         PriorityQueue<Order> buyOrders = orderBook.getBuyOrders();
 
         if (createOrderRequest.getDirection().equals(Direction.BUY)) {
+            log.info("Initiating Fulfill Order flow for BUY Order");
             return fulfillOrder(sellOrders, buyOrders, incomingOrder, Direction.BUY);
 
         } else {
+            log.info("Initiating Fulfill Order flow for SELL Order");
             return fulfillOrder(buyOrders, sellOrders, incomingOrder, Direction.SELL);
         }
     }
@@ -56,6 +60,7 @@ public class OrdersService {
                     ? fulfillmentQueue.peek().getPrice().compareTo(incomingOrder.getPrice()) > 0
                     : fulfillmentQueue.peek().getPrice().compareTo(incomingOrder.getPrice()) < 0;
             if (noPriceMatchAvailable) {
+                log.error("No price matches available for incoming order in {} queue", direction);
                 break;
             }
             // method to update the trades for incoming and existing orders, along with
