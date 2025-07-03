@@ -23,6 +23,8 @@ public class Order {
             .comparing((Order o) -> o.price)
             .thenComparing(o -> o.timestamp);
 
+    // reversedOrder() added to make sure that the highest priced BUY Order stays at
+    // the top of the PQ.
     public static final Comparator<Order> BUY_COMPARATOR = Comparator
             .comparing((Order o) -> o.price, Comparator.reverseOrder())
             .thenComparing(o -> o.timestamp);
