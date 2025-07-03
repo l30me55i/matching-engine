@@ -12,7 +12,7 @@
 	<artifactId>matching-engine</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>matching-engine</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Baraka matching engine</description>
 	<url/>
 	<licenses>
 		<license/>
