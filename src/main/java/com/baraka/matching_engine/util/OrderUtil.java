@@ -51,7 +51,7 @@ public class OrderUtil {
 
                 // minAmount field is calculated to find the minimum amount to deduct from the
                 // pendingAmount for existing and incoming orders
-                BigDecimal minAmount = existingOrder.getPendingAmount().min(incomingOrder.getAmount());
+                BigDecimal minAmount = existingOrder.getPendingAmount().min(incomingOrder.getPendingAmount());
 
                 log.info("Setting up trades for incoming order and existing orders");
                 Trade incomingOrderTrade = Trade.builder().amount(minAmount).orderId(incomingOrder.getId())

@@ -17,14 +17,14 @@ import com.baraka.matching_engine.enums.Direction;
 import com.baraka.matching_engine.request.CreateOrderRequest;
 import com.baraka.matching_engine.service.OrdersService;
 
-public class OrderServiceTests {
+class OrderServiceTests {
 
     public OrdersService ordersService;
     public OrderBook orderBook;
     private CreateOrderRequest createOrderRequest;
 
     @BeforeEach
-    public void init() {
+    void init() {
         orderBook = Mockito.mock(OrderBook.class);
         ordersService = new OrdersService(orderBook);
         createOrderRequest = new CreateOrderRequest();
@@ -87,7 +87,7 @@ public class OrderServiceTests {
         Order order = ordersService.createOrder(createOrderRequest);
         assertTrue(!order.getTrades().isEmpty());
         assertEquals(order.getTrades().size(), 1);
-        assertTrue(order.getPendingAmount().compareTo(BigDecimal.ZERO) == 0);
+        assertEquals(BigDecimal.ZERO,order.getPendingAmount());
     }
 
     // when buy queue has a matching element for incoming sell order queue but
